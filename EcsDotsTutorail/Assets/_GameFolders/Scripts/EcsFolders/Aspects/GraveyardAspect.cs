@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using EcsDotsTutorial.Components;
 using Unity.Entities;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace EcsDotsTutorial.Aspects
 {
@@ -13,5 +10,8 @@ namespace EcsDotsTutorial.Aspects
         readonly RefRW<LocalTransform> _localTransformRW;
         readonly RefRO<GraveyardDataComponent> _graveyardRO;
         readonly RefRO<GraveyardRandomDataComponent> _graveyardRandomRO;
+
+        public int NumberTombstonesToSpawn => _graveyardRO.ValueRO.NumberTombstoneToSpawn;
+        public Entity TombStonePrefab => _graveyardRO.ValueRO.TombStonePrefab;
     }
 }

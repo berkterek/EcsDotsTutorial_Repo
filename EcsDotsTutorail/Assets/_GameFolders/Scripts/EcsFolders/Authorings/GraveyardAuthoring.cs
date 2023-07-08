@@ -1,4 +1,5 @@
-﻿using EcsDotsTutorial.Components;
+﻿using System;
+using EcsDotsTutorial.Components;
 using Unity.Entities;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
@@ -15,6 +16,7 @@ namespace EcsDotsTutorial.Authorings
     
     public class GraveyardBaker : Baker<GraveyardAuthoring>
     {
+        [Obsolete("Obsolete")]
         public override void Bake(GraveyardAuthoring authoring)
         {
             AddComponent(new GraveyardDataComponent()
