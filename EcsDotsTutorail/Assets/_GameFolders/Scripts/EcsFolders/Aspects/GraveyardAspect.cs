@@ -7,6 +7,8 @@ namespace EcsDotsTutorial.Aspects
 {
     public readonly partial struct GraveyardAspect : IAspect
     {
+        const float SAFETY_RADIUS_SQ = 100f;
+        
         public readonly Entity Entity;
         readonly RefRO<LocalTransform> _localTransformRO;
         readonly RefRO<GraveyardDataComponent> _graveyardRO;
@@ -30,16 +32,30 @@ namespace EcsDotsTutorial.Aspects
             return new LocalTransform()
             {
                 Position = GetRandomPosition(),
-                Rotation = quaternion.identity,
-                Scale = 1f
+                Rotation = GetRandomRotation(),
+                Scale = GetRandomScale()
             };
         }
 
         private float3 GetRandomPosition()
         {
-            float3 randomPosition = _graveyardRandomRW.ValueRW.Value.NextFloat3(MinCorner, MaxCorner);
+            float3 randomPosition;
+            do
+            {
+                randomPosition = _graveyardRandomRW.ValueRW.Value.NextFloat3(MinCorner, MaxCorner);    
+            } while (math.distancesq(randomPosition, _localTransformRO.ValueRO.Position) <= SAFETY_RADIUS_SQ);
 
             return randomPosition;
+        }
+
+        private quaternion GetRandomRotation()
+        {
+            return quaternion.RotateY(_graveyardRandomRW.ValueRW.Value.NextFloat(-0.35f, 0.35f));
+        }
+
+        private float GetRandomScale()
+        {
+            return _graveyardRandomRW.ValueRW.Value.NextFloat(0.5f, 1f);
         }
     }
 }
