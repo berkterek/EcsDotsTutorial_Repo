@@ -380,5 +380,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prefab: {fileID: 1070309386848562365, guid: 1df7c4b8586605f4282378ea62cc623c, type: 3}
   NumberTombstoneToSpawn: 50
-  FieldDimension: {x: 23, y: 23}
+  FieldDimension: {x: 45, y: 45}
   RandomSeed: 100

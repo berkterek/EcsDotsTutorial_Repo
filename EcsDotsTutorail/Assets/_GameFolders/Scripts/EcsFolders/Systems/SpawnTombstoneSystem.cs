@@ -3,6 +3,7 @@ using EcsDotsTutorial.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Transforms;
 
 namespace EcsDotsTutorial.Systems
 {
@@ -25,7 +26,9 @@ namespace EcsDotsTutorial.Systems
             int count = graveyardAspect.NumberTombstonesToSpawn;
             for (int i = 0; i < count; i++)
             {
-                entityCommandBuffer.Instantiate(graveyardAspect.TombStonePrefab);
+                var spawnTombstoneEntity = entityCommandBuffer.Instantiate(graveyardAspect.TombStonePrefab);
+                var tombstoneLocalTransform = graveyardAspect.GetRandomLocalTransform();
+                entityCommandBuffer.SetComponent(spawnTombstoneEntity, tombstoneLocalTransform);
             }
             
             entityCommandBuffer.Playback(state.EntityManager);
