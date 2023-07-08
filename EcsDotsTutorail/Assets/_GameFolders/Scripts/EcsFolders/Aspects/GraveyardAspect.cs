@@ -1,4 +1,5 @@
 using EcsDotsTutorial.Components;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -8,14 +9,28 @@ namespace EcsDotsTutorial.Aspects
     public readonly partial struct GraveyardAspect : IAspect
     {
         const float SAFETY_RADIUS_SQ = 100f;
-        
+
         public readonly Entity Entity;
         readonly RefRO<LocalTransform> _localTransformRO;
         readonly RefRO<GraveyardDataComponent> _graveyardRO;
         readonly RefRW<GraveyardRandomDataComponent> _graveyardRandomRW;
+        readonly RefRW<ZombieSpawnConfigAsset> _zombieSpawnConfigAssetRW;
 
         public int NumberTombstonesToSpawn => _graveyardRO.ValueRO.NumberTombstoneToSpawn;
         public Entity TombStonePrefab => _graveyardRO.ValueRO.TombStonePrefab;
+
+        public NativeArray<float3> GetSpawnPoints()
+        {
+            ref var zombieConfig = ref _zombieSpawnConfigAssetRW.ValueRO.Config.Value;
+            return zombieConfig.Values;
+        }
+
+        public void SetSpawnPoints(NativeArray<float3> values)
+        {
+            ref var zombieConfig = ref _zombieSpawnConfigAssetRW.ValueRO.Config.Value;
+            zombieConfig.Values = values;
+            _zombieSpawnConfigAssetRW.ValueRW.Config.Value = zombieConfig;
+        }
 
         float3 MinCorner => _localTransformRO.ValueRO.Position - HalfDimension;
         float3 MaxCorner => _localTransformRO.ValueRO.Position + HalfDimension;
@@ -42,7 +57,7 @@ namespace EcsDotsTutorial.Aspects
             float3 randomPosition;
             do
             {
-                randomPosition = _graveyardRandomRW.ValueRW.Value.NextFloat3(MinCorner, MaxCorner);    
+                randomPosition = _graveyardRandomRW.ValueRW.Value.NextFloat3(MinCorner, MaxCorner);
             } while (math.distancesq(randomPosition, _localTransformRO.ValueRO.Position) <= SAFETY_RADIUS_SQ);
 
             return randomPosition;

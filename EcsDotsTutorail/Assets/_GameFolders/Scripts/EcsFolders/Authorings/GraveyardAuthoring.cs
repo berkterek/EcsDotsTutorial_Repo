@@ -16,19 +16,37 @@ namespace EcsDotsTutorial.Authorings
     
     public class GraveyardBaker : Baker<GraveyardAuthoring>
     {
-        [Obsolete("Obsolete")]
         public override void Bake(GraveyardAuthoring authoring)
         {
-            AddComponent(new GraveyardDataComponent()
+            var graveyardEntity = GetEntity(TransformUsageFlags.Dynamic); 
+            AddComponent(graveyardEntity, new GraveyardDataComponent()
             {
                 FieldDimension = authoring.FieldDimension,
                 NumberTombstoneToSpawn = authoring.NumberTombstoneToSpawn,
                 TombStonePrefab = GetEntity(authoring.Prefab, TransformUsageFlags.None)
             });
             
-            AddComponent(new GraveyardRandomDataComponent()
+            AddComponent(graveyardEntity, new GraveyardRandomDataComponent()
             {
                 Value = Random.CreateFromIndex(authoring.RandomSeed)
+            });
+
+            BlobAssetReference<ZombieSpawnPointsConfig> config;
+            using (var blobAssetReference = new BlobBuilder(Unity.Collections.Allocator.Temp))
+            {
+#pragma warning disable EA0003
+                ref ZombieSpawnPointsConfig zombieConfig = ref blobAssetReference.ConstructRoot<ZombieSpawnPointsConfig>();
+#pragma warning restore EA0003
+                
+                config = blobAssetReference.CreateBlobAssetReference<ZombieSpawnPointsConfig>(Unity.Collections
+                    .Allocator.Persistent);
+            }
+            
+            AddBlobAsset(ref config, out var hash);
+
+            AddComponent(graveyardEntity, new ZombieSpawnConfigAsset()
+            {
+                Config = config
             });
         }
     }
