@@ -13,13 +13,13 @@ namespace EcsDotsTutorial.Systems
     {
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<GraveyardDataComponent>();
+            state.RequireForUpdate<GraveyardData>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var graveyardEntity = SystemAPI.GetSingletonEntity<GraveyardDataComponent>();
+            var graveyardEntity = SystemAPI.GetSingletonEntity<GraveyardData>();
             var graveyardAspect = SystemAPI.GetAspect<GraveyardAspect>(graveyardEntity);
 
             var entityCommandBuffer = new EntityCommandBuffer(Allocator.Temp);
@@ -39,7 +39,7 @@ namespace EcsDotsTutorial.Systems
             }
 
             var blobAsset = builder.CreateBlobAssetReference<ZombieSpawnPointsBlobData>(Allocator.Persistent);
-            entityCommandBuffer.SetComponent(graveyardEntity, new ZombieSpawnPointsReference()
+            entityCommandBuffer.SetComponent(graveyardEntity, new ZombieSpawnPointsData()
             {
                 Config = blobAsset
             });

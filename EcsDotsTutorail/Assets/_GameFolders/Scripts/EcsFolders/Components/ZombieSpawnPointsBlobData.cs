@@ -3,12 +3,12 @@ using Unity.Mathematics;
 
 namespace EcsDotsTutorial.Components
 {
-    public struct ZombieSpawnPointsBlobData
+    public struct ZombieSpawnPointsBlobData : IComponentData
     {
         public BlobArray<float3> Values;
     }
 
-    public struct ZombieSpawnPointsReference : IComponentData
+    public struct ZombieSpawnPointsData : IComponentData
     {
         public BlobAssetReference<ZombieSpawnPointsBlobData> Config;
     }

@@ -1,5 +1,4 @@
 using EcsDotsTutorial.Components;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -10,19 +9,27 @@ namespace EcsDotsTutorial.Aspects
     {
         const float SAFETY_RADIUS_SQ = 100f;
 
-        public readonly Entity Entity;
         readonly RefRO<LocalTransform> _localTransformRO;
-        readonly RefRO<GraveyardDataComponent> _graveyardRO;
-        readonly RefRW<GraveyardRandomDataComponent> _graveyardRandomRW;
-        readonly RefRW<ZombieSpawnPointsReference> _zombieSpawnPointsRW;
+        readonly RefRO<GraveyardData> _graveyardRO;
+        readonly RefRW<GraveyardRandomData> _graveyardRandomRW;
+        readonly RefRW<ZombieSpawnPointsData> _zombieSpawnPointsRW;
+        readonly RefRW<ZombieSpawnTimerData> _zombieSpawnTimerRW;
 
+        public BlobArray<float3> ZombieSpawnPoints => _zombieSpawnPointsRW.ValueRO.Config.Value.Values;
         public int NumberTombstonesToSpawn => _graveyardRO.ValueRO.NumberTombstoneToSpawn;
         public Entity TombStonePrefab => _graveyardRO.ValueRO.TombStonePrefab;
-        public int ZombieSpawnPointCount => _zombieSpawnPointsRW.ValueRO.Config.Value.Values.Length;
+        public Entity ZombiePrefab => _graveyardRO.ValueRO.ZombiePrefab;
+        public bool TimeToSpawnZombie => ZombieSpawnCurrentRate <= 0f;
+        public float ZombieSpawnRate => _graveyardRO.ValueRO.ZombieSpawnRate;
+        public float ZombieSpawnCurrentRate
+        {
+            get => _zombieSpawnTimerRW.ValueRO.CurrentSpawnTime;
+            set => _zombieSpawnTimerRW.ValueRW.CurrentSpawnTime = value;
+        }
 
+        int ZombieSpawnPointCount => _zombieSpawnPointsRW.ValueRO.Config.Value.Values.Length;
         float3 MinCorner => _localTransformRO.ValueRO.Position - HalfDimension;
         float3 MaxCorner => _localTransformRO.ValueRO.Position + HalfDimension;
-
         float3 HalfDimension => new float3
         (
             _graveyardRO.ValueRO.FieldDimension.x * 0.5f,
@@ -30,15 +37,15 @@ namespace EcsDotsTutorial.Aspects
             _graveyardRO.ValueRO.FieldDimension.y * 0.5f
         );
         
-        public bool ZombieSpawnPointInitialized()
-        {
-            return _zombieSpawnPointsRW.ValueRO.Config.IsCreated && ZombieSpawnPointCount > 0;
-        }
+         public bool ZombieSpawnPointInitialized()
+         {
+             return _zombieSpawnPointsRW.ValueRO.Config.IsCreated && ZombieSpawnPointCount > 0;
+         }
 
-        public float3 GetRandomZombieSpawnPoint()
-        {
-            return GetZombieSpawnPoint(_graveyardRandomRW.ValueRW.Value.NextInt(ZombieSpawnPointCount));
-        }
+         public float3 GetRandomZombieSpawnPoint()
+         {
+             return GetZombieSpawnPoint(_graveyardRandomRW.ValueRW.Value.NextInt(ZombieSpawnPointCount));
+         }
 
         private float3 GetZombieSpawnPoint(int i) => _zombieSpawnPointsRW.ValueRO.Config.Value.Values[i];
 

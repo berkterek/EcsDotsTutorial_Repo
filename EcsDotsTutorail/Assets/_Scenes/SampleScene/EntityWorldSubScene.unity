@@ -378,7 +378,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60ccb05c05254612a6b82727a08a0404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1070309386848562365, guid: 1df7c4b8586605f4282378ea62cc623c, type: 3}
+  TombstonePrefab: {fileID: 1070309386848562365, guid: 1df7c4b8586605f4282378ea62cc623c,
+    type: 3}
   NumberTombstoneToSpawn: 50
   FieldDimension: {x: 45, y: 45}
   RandomSeed: 100
+  ZombiePrefab: {fileID: 1144446335083889641, guid: f83e04a1c2da1344cbdf761af9bc0332,
+    type: 3}
+  ZombieSpawnRate: 2
