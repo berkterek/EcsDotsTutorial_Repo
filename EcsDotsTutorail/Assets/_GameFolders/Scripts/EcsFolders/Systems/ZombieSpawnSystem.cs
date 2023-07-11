@@ -1,7 +1,7 @@
 ﻿using EcsDotsTutorial.Aspects;
-using EcsDotsTutorial.Components;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Transforms;
 
 namespace EcsDotsTutorial.Systems
 {
@@ -12,9 +12,6 @@ namespace EcsDotsTutorial.Systems
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BeginInitializationEntityCommandBufferSystem.Singleton>();
-            // state.RequireForUpdate<GraveyardData>();
-            // state.RequireForUpdate<ZombieSpawnPointsBlobData>();
-            // state.RequireForUpdate<ZombieSpawnTimerData>();
         }
 
         [BurstCompile]
@@ -27,7 +24,7 @@ namespace EcsDotsTutorial.Systems
             new ZombieSpawnJob()
             {
                 DeltaTime = deltaTime,
-                EntityCommandBuffer = entityCommandBufferSingleton.CreateCommandBuffer(state.WorldUnmanaged)
+                EntityCommandBufferSingleton = entityCommandBufferSingleton.CreateCommandBuffer(state.WorldUnmanaged)
             }.Run();
         }
     }
@@ -36,7 +33,7 @@ namespace EcsDotsTutorial.Systems
     public partial struct ZombieSpawnJob : IJobEntity
     {
         public float DeltaTime;
-        public EntityCommandBuffer EntityCommandBuffer;
+        public EntityCommandBuffer EntityCommandBufferSingleton;
         
         [BurstCompile]
         private void Execute(GraveyardAspect graveyardAspect)
@@ -48,7 +45,8 @@ namespace EcsDotsTutorial.Systems
             if(graveyardAspect.ZombieSpawnPoints.Length == 0) return;
 
             graveyardAspect.ZombieSpawnCurrentRate = graveyardAspect.ZombieSpawnRate;
-            var zombieEntity = EntityCommandBuffer.Instantiate(graveyardAspect.ZombiePrefab);
+            var zombieEntity = EntityCommandBufferSingleton.Instantiate(graveyardAspect.ZombiePrefab);
+            EntityCommandBufferSingleton.SetComponent(zombieEntity, graveyardAspect.GetZombieRandomSpawnPoint());
         }
     }
 }

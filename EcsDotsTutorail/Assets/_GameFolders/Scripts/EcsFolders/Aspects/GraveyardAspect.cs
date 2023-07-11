@@ -1,4 +1,5 @@
 using EcsDotsTutorial.Components;
+using EcsDotsTutorial.Helpers;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -42,7 +43,18 @@ namespace EcsDotsTutorial.Aspects
              return _zombieSpawnPointsRW.ValueRO.Config.IsCreated && ZombieSpawnPointCount > 0;
          }
 
-         public float3 GetRandomZombieSpawnPoint()
+         public LocalTransform GetZombieRandomSpawnPoint()
+         {
+             var randomPosition = GetRandomZombieSpawnPoint();
+             return new LocalTransform()
+             {
+                 Position = randomPosition,
+                 Rotation = quaternion.RotateY(MathHelper.GetHeading(randomPosition, float3.zero)),
+                 Scale = 1f
+             };
+         }
+
+         private float3 GetRandomZombieSpawnPoint()
          {
              return GetZombieSpawnPoint(_graveyardRandomRW.ValueRW.Value.NextInt(ZombieSpawnPointCount));
          }
