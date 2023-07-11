@@ -1,5 +1,6 @@
 ﻿using EcsDotsTutorial.Components;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace EcsDotsTutorial.Aspects
@@ -27,6 +28,9 @@ namespace EcsDotsTutorial.Aspects
         {
             WalkTimer += deltaTime;
             _localTransformRW.ValueRW.Position += deltaTime * _zombieWalkDataRO.ValueRO.WalkSpeed * _localTransformRW.ValueRW.Forward();
+
+            var wayAngle = WalkAmplitude * math.sin(WalkFrequency * WalkTimer);
+            _localTransformRW.ValueRW.Rotation = quaternion.Euler(0f, Heading, wayAngle);
         }
     }
 }

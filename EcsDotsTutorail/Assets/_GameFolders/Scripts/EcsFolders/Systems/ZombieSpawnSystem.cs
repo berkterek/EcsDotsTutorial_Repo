@@ -1,4 +1,6 @@
 ﻿using EcsDotsTutorial.Aspects;
+using EcsDotsTutorial.Components;
+using EcsDotsTutorial.Helpers;
 using Unity.Burst;
 using Unity.Entities;
 
@@ -44,8 +46,16 @@ namespace EcsDotsTutorial.Systems
             if(graveyardAspect.ZombieSpawnPoints.Length == 0) return;
 
             graveyardAspect.ZombieSpawnCurrentRate = graveyardAspect.ZombieSpawnRate;
+            
             var zombieEntity = EntityCommandBufferSingleton.Instantiate(graveyardAspect.ZombiePrefab);
-            EntityCommandBufferSingleton.SetComponent(zombieEntity, graveyardAspect.GetZombieRandomSpawnPoint());
+            var newZombieRandomPosition = graveyardAspect.GetZombieRandomSpawnPoint();
+            EntityCommandBufferSingleton.SetComponent(zombieEntity, newZombieRandomPosition);
+
+            var zombieHeading = MathHelper.GetHeading(newZombieRandomPosition.Position, graveyardAspect.Position);
+            EntityCommandBufferSingleton.SetComponent(zombieEntity, new ZombieHeadingData()
+            {
+                HeadingValue = zombieHeading
+            });
         }
     }
 }

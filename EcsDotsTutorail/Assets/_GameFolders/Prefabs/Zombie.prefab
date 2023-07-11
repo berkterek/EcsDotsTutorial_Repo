@@ -122,5 +122,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ZombieRiseRate: 0.5
   WalkSpeed: 1
-  WalkAmplitude: 0
-  WalkFrequecy: 0
+  WalkAmplitude: 0.8
+  WalkFrequecy: 1

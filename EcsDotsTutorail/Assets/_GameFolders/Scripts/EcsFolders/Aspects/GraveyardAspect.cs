@@ -16,6 +16,7 @@ namespace EcsDotsTutorial.Aspects
         readonly RefRW<ZombieSpawnPointsData> _zombieSpawnPointsRW;
         readonly RefRW<ZombieSpawnTimerData> _zombieSpawnTimerRW;
 
+        public float3 Position => _localTransformRO.ValueRO.Position;
         public BlobArray<float3> ZombieSpawnPoints => _zombieSpawnPointsRW.ValueRO.Config.Value.Values;
         public int NumberTombstonesToSpawn => _graveyardRO.ValueRO.NumberTombstoneToSpawn;
         public Entity TombStonePrefab => _graveyardRO.ValueRO.TombStonePrefab;
