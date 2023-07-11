@@ -1,7 +1,6 @@
 ﻿using EcsDotsTutorial.Aspects;
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Transforms;
 
 namespace EcsDotsTutorial.Systems
 {
