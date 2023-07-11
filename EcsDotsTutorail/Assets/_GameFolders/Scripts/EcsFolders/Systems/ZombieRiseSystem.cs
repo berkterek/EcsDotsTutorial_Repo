@@ -28,7 +28,8 @@ namespace EcsDotsTutorial.Systems
             new ZombieRiseJob()
             {
                 DeltaTime = deltaTime,
-                EntityCommandBufferSingleton= entityCommandBufferSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
+                EntityCommandBufferSingleton = entityCommandBufferSingleton.CreateCommandBuffer(state.WorldUnmanaged)
+                    .AsParallelWriter()
             }.ScheduleParallel();
         }
     }
@@ -38,16 +39,17 @@ namespace EcsDotsTutorial.Systems
     {
         public EntityCommandBuffer.ParallelWriter EntityCommandBufferSingleton;
         public float DeltaTime;
-        
+
         [BurstCompile]
-        private void Execute(ZombieRiseAspect zombieRiseAspect, [ChunkIndexInQuery]int sortKey)
+        private void Execute(ZombieRiseAspect zombieRiseAspect, [ChunkIndexInQuery] int sortKey)
         {
             zombieRiseAspect.RiseProcess(DeltaTime);
 
             if (zombieRiseAspect.IsAboveGround)
             {
                 zombieRiseAspect.SetOnGround();
-                EntityCommandBufferSingleton.RemoveComponent<ZombieSpawnTimerData>(sortKey,zombieRiseAspect.Entity);
+                EntityCommandBufferSingleton.RemoveComponent<ZombieSpawnTimerData>(sortKey, zombieRiseAspect.Entity);
+                EntityCommandBufferSingleton.SetComponentEnabled<ZombieWalkData>(sortKey, zombieRiseAspect.Entity, true);
             }
         }
     }

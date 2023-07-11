@@ -2,7 +2,7 @@
 
 namespace EcsDotsTutorial.Components
 {
-    public struct ZombieWalkData : IComponentData
+    public struct ZombieWalkData : IComponentData, IEnableableComponent
     {
         public float WalkSpeed;
         public float WalkAmplitude;
@@ -17,5 +17,10 @@ namespace EcsDotsTutorial.Components
     public struct ZombieHeadingData : IComponentData
     {
         public float HeadingValue;
+    }
+
+    public struct ZombieTagData : IComponentData
+    {
+        
     }
 }

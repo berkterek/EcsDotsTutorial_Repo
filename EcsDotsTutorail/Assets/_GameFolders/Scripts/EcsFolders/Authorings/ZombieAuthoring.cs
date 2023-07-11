@@ -32,6 +32,7 @@ namespace EcsDotsTutorial.Authorings
 
             AddComponent<ZombieWalkTimerData>(zombieEntity);
             AddComponent<ZombieHeadingData>(zombieEntity);
+            AddComponent<ZombieTagData>(zombieEntity);
         }
     }
 }
