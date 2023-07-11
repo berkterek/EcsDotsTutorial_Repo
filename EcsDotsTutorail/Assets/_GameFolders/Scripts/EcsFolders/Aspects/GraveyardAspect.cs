@@ -14,23 +14,11 @@ namespace EcsDotsTutorial.Aspects
         readonly RefRO<LocalTransform> _localTransformRO;
         readonly RefRO<GraveyardDataComponent> _graveyardRO;
         readonly RefRW<GraveyardRandomDataComponent> _graveyardRandomRW;
-        readonly RefRW<ZombieSpawnConfigAsset> _zombieSpawnConfigAssetRW;
+        readonly RefRW<ZombieSpawnPointsReference> _zombieSpawnPointsRW;
 
         public int NumberTombstonesToSpawn => _graveyardRO.ValueRO.NumberTombstoneToSpawn;
         public Entity TombStonePrefab => _graveyardRO.ValueRO.TombStonePrefab;
-
-        public NativeArray<float3> GetSpawnPoints()
-        {
-            ref var zombieConfig = ref _zombieSpawnConfigAssetRW.ValueRO.Config.Value;
-            return zombieConfig.Values;
-        }
-
-        public void SetSpawnPoints(NativeArray<float3> values)
-        {
-            ref var zombieConfig = ref _zombieSpawnConfigAssetRW.ValueRO.Config.Value;
-            zombieConfig.Values = values;
-            _zombieSpawnConfigAssetRW.ValueRW.Config.Value = zombieConfig;
-        }
+        public int ZombieSpawnPointCount => _zombieSpawnPointsRW.ValueRO.Config.Value.Values.Length;
 
         float3 MinCorner => _localTransformRO.ValueRO.Position - HalfDimension;
         float3 MaxCorner => _localTransformRO.ValueRO.Position + HalfDimension;
@@ -41,6 +29,18 @@ namespace EcsDotsTutorial.Aspects
             0f,
             _graveyardRO.ValueRO.FieldDimension.y * 0.5f
         );
+        
+        public bool ZombieSpawnPointInitialized()
+        {
+            return _zombieSpawnPointsRW.ValueRO.Config.IsCreated && ZombieSpawnPointCount > 0;
+        }
+
+        public float3 GetRandomZombieSpawnPoint()
+        {
+            return GetZombieSpawnPoint(_graveyardRandomRW.ValueRW.Value.NextInt(ZombieSpawnPointCount));
+        }
+
+        private float3 GetZombieSpawnPoint(int i) => _zombieSpawnPointsRW.ValueRO.Config.Value.Values[i];
 
         public LocalTransform GetRandomLocalTransform()
         {

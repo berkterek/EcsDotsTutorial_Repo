@@ -30,24 +30,8 @@ namespace EcsDotsTutorial.Authorings
             {
                 Value = Random.CreateFromIndex(authoring.RandomSeed)
             });
-
-            BlobAssetReference<ZombieSpawnPointsConfig> config;
-            using (var blobAssetReference = new BlobBuilder(Unity.Collections.Allocator.Temp))
-            {
-#pragma warning disable EA0003
-                ref ZombieSpawnPointsConfig zombieConfig = ref blobAssetReference.ConstructRoot<ZombieSpawnPointsConfig>();
-#pragma warning restore EA0003
-                
-                config = blobAssetReference.CreateBlobAssetReference<ZombieSpawnPointsConfig>(Unity.Collections
-                    .Allocator.Persistent);
-            }
             
-            AddBlobAsset(ref config, out var hash);
-
-            AddComponent(graveyardEntity, new ZombieSpawnConfigAsset()
-            {
-                Config = config
-            });
+            AddComponent<ZombieSpawnPointsReference>(graveyardEntity);
         }
     }
 }

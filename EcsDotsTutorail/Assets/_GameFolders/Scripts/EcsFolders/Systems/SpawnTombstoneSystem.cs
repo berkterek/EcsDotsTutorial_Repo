@@ -9,7 +9,7 @@ namespace EcsDotsTutorial.Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public partial struct SpawnTombstoneSystem: ISystem
+    public partial struct SpawnTombstoneSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
         {
@@ -23,21 +23,29 @@ namespace EcsDotsTutorial.Systems
             var graveyardAspect = SystemAPI.GetAspect<GraveyardAspect>(graveyardEntity);
 
             var entityCommandBuffer = new EntityCommandBuffer(Allocator.Temp);
-            var spawnPoints = new NativeList<float3>(Allocator.Temp);
-            var tombstoneOffset = new float3(0f, -2f, 1f);
+            var builder = new BlobBuilder(Allocator.Temp);
+            ref var spawnPoints = ref builder.ConstructRoot<ZombieSpawnPointsBlobData>();
             int count = graveyardAspect.NumberTombstonesToSpawn;
+            var arrayBuilder = builder.Allocate(ref spawnPoints.Values, count);
+
+            var tombstoneOffset = new float3(0f, -2f, 1f);
             for (int i = 0; i < count; i++)
             {
                 var spawnTombstoneEntity = entityCommandBuffer.Instantiate(graveyardAspect.TombStonePrefab);
                 var tombstoneLocalTransform = graveyardAspect.GetRandomLocalTransform();
                 entityCommandBuffer.SetComponent(spawnTombstoneEntity, tombstoneLocalTransform);
                 var newZombieSpawnPoint = tombstoneLocalTransform.Position + tombstoneOffset;
-                spawnPoints.Add(newZombieSpawnPoint);
+                arrayBuilder[i] = newZombieSpawnPoint;
             }
-            
-            graveyardAspect.SetSpawnPoints(spawnPoints.ToArray(Allocator.Persistent));
+
+            var blobAsset = builder.CreateBlobAssetReference<ZombieSpawnPointsBlobData>(Allocator.Persistent);
+            entityCommandBuffer.SetComponent(graveyardEntity, new ZombieSpawnPointsReference()
+            {
+                Config = blobAsset
+            });
             entityCommandBuffer.Playback(state.EntityManager);
 
+            builder.Dispose();
             state.Enabled = false;
         }
     }
