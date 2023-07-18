@@ -4,7 +4,6 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace EcsDotsTutorial.Systems
 {
@@ -54,9 +53,9 @@ namespace EcsDotsTutorial.Systems
 
             if (zombieWalkAspect.IsInStopRange(float3.zero, BrainRadiusSq))
             {
-                Debug.Log("Zombie Walk Enable False " + sortKey);
                 EntityCommandBufferParalleWriter.SetComponentEnabled<ZombieWalkData>(sortKey, zombieWalkAspect.Entity,
                     false);
+                EntityCommandBufferParalleWriter.SetComponentEnabled<ZombieEatData>(sortKey, zombieWalkAspect.Entity, true);
             }
         }
     }

@@ -10,6 +10,10 @@ namespace EcsDotsTutorial.Authorings
         public float WalkSpeed;
         public float WalkAmplitude;
         public float WalkFrequecy;
+        
+        public float EatSpeed;
+        public float EatAmplitude;
+        public float EatFrequecy;
     }
     
     public class ZombieBaker : Baker<ZombieAuthoring>
@@ -30,6 +34,14 @@ namespace EcsDotsTutorial.Authorings
                 WalkFrequency = authoring.WalkFrequecy
             });
 
+            AddComponent(zombieEntity, new ZombieEatData()
+            {
+                EatAmplitude = authoring.EatAmplitude,
+                EatSpeed = authoring.EatSpeed,
+                EatFrequency = authoring.EatFrequecy
+            });
+
+            AddComponent<ZombieEatTimerData>(zombieEntity);
             AddComponent<ZombieWalkTimerData>(zombieEntity);
             AddComponent<ZombieHeadingData>(zombieEntity);
             AddComponent<ZombieTagData>(zombieEntity);

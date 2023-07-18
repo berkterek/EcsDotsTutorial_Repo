@@ -24,6 +24,7 @@ namespace EcsDotsTutorial.Systems
             {
                 entityCommandBuffer.RemoveComponent<ZombieTagData>(zombieWalkAspect.Entity);
                 entityCommandBuffer.SetComponentEnabled<ZombieWalkData>(zombieWalkAspect.Entity, false);
+                entityCommandBuffer.SetComponentEnabled<ZombieEatData>(zombieWalkAspect.Entity, false);
             }
             
             entityCommandBuffer.Playback(state.EntityManager);
