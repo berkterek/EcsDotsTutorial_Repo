@@ -25,11 +25,19 @@ namespace EcsDotsTutorial.Aspects
             set => _zombieTimerDataRW.ValueRW.Value = value;
         }
 
-        public void Eat(float deltaTime)
+        public void Eat(float deltaTime, EntityCommandBuffer.ParallelWriter entityCommandBuffer, int sortKey, Entity entityBrain)
         {
             ZombieTimer += deltaTime;
             var eatAngle = EatAmplitude * math.sin(EatFrequency * ZombieTimer);
             _localTransformRW.ValueRW.Rotation = quaternion.Euler(eatAngle, Heading, 0f);
+
+            var eatDamage = EatDamagePerSecond * deltaTime;
+            var currentBrainDamage = new BrainDamageBuffer()
+            {
+                Value = eatDamage
+            };
+            
+            entityCommandBuffer.AppendToBuffer(sortKey, entityBrain, currentBrainDamage);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace EcsDotsTutorial.Authorings
 {
     public class BrainAuthoring : MonoBehaviour
     {
-        
+        public float MaxHealth;
     }
 
     public class BrainBaker : Baker<BrainAuthoring>
@@ -16,6 +16,12 @@ namespace EcsDotsTutorial.Authorings
             var entity = GetEntity(TransformUsageFlags.Dynamic);
 
             AddComponent<BrainTag>(entity);
+            AddBuffer<BrainDamageBuffer>(entity);
+            AddComponent(entity, new BrainHealthData()
+            {
+                Max = authoring.MaxHealth,
+                Current = authoring.MaxHealth
+            });
         }
     }
 }
