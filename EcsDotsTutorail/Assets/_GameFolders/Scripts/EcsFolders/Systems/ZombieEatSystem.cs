@@ -2,6 +2,7 @@
 using EcsDotsTutorial.Components;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace EcsDotsTutorial.Systems
@@ -25,13 +26,14 @@ namespace EcsDotsTutorial.Systems
             var deltaTime = SystemAPI.Time.DeltaTime;
             var entityCommandBuffer = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
             var brainEntity = SystemAPI.GetSingletonEntity<BrainTag>();
+            var brainSq = SystemAPI.GetComponent<LocalTransform>(brainEntity).Scale * 5f + 1f;
 
             new ZombieEatJob()
             {
                 DeltaTime = deltaTime,
                 BrainEntity = brainEntity,
+                BrainRadiusSq = brainSq,
                 EntityCommandBufferSystem = entityCommandBuffer.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
-                
             }.ScheduleParallel();
         }
     }
@@ -41,12 +43,21 @@ namespace EcsDotsTutorial.Systems
     {
         public float DeltaTime;
         public Entity BrainEntity;
+        public float BrainRadiusSq;
         public EntityCommandBuffer.ParallelWriter EntityCommandBufferSystem;
 
         [BurstCompile]
         private void Execute(ZombieEatAspect zombieEatAspect, [ChunkIndexInQuery] int sortKey)
         {
-            zombieEatAspect.Eat(DeltaTime, EntityCommandBufferSystem, sortKey, BrainEntity);
+            if (zombieEatAspect.IsEatingRange(float3.zero, BrainRadiusSq))
+            {
+                zombieEatAspect.Eat(DeltaTime, EntityCommandBufferSystem, sortKey, BrainEntity);    
+            }
+            else
+            {
+                EntityCommandBufferSystem.SetComponentEnabled<ZombieEatData>(sortKey,zombieEatAspect.Entity, false);
+                EntityCommandBufferSystem.SetComponentEnabled<ZombieWalkData>(sortKey,zombieEatAspect.Entity, true);
+            }
         }
     }
 }

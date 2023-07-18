@@ -19,6 +19,8 @@ namespace EcsDotsTutorial.Aspects
             }
             
             _brainDamageBuffer.Clear();
+
+            _localTransformRW.ValueRW.Scale = (_brainHealthDataRW.ValueRO.Current / _brainHealthDataRW.ValueRO.Max) * 10f;
         }
     }
 }

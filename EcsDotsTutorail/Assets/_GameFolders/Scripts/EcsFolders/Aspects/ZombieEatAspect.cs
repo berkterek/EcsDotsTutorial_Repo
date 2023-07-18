@@ -39,5 +39,11 @@ namespace EcsDotsTutorial.Aspects
             
             entityCommandBuffer.AppendToBuffer(sortKey, entityBrain, currentBrainDamage);
         }
+
+        public bool IsEatingRange(float3 brainPosition, float brainRadiusSq)
+        {
+            var distanceSq = math.distancesq(brainPosition, _localTransformRW.ValueRO.Position);
+            return distanceSq <= brainRadiusSq - 1f;
+        }
     }
 }
