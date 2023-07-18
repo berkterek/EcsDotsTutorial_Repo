@@ -32,5 +32,11 @@ namespace EcsDotsTutorial.Aspects
             var wayAngle = WalkAmplitude * math.sin(WalkFrequency * WalkTimer);
             _localTransformRW.ValueRW.Rotation = quaternion.Euler(0f, Heading, wayAngle);
         }
+
+        public bool IsInStopRange(float3 brainPosition, float brainRadiusSq)
+        {
+            float distanceSqResult = math.distancesq(brainPosition, _localTransformRW.ValueRO.Position);
+            return distanceSqResult <= brainRadiusSq;
+        }
     }
 }

@@ -48,7 +48,7 @@ namespace EcsDotsTutorial.Systems
             if (zombieRiseAspect.IsAboveGround)
             {
                 zombieRiseAspect.SetOnGround();
-                EntityCommandBufferSingleton.RemoveComponent<ZombieSpawnTimerData>(sortKey, zombieRiseAspect.Entity);
+                EntityCommandBufferSingleton.RemoveComponent<ZombieRiseTimerData>(sortKey, zombieRiseAspect.Entity);
                 EntityCommandBufferSingleton.SetComponentEnabled<ZombieWalkData>(sortKey, zombieRiseAspect.Entity, true);
             }
         }
