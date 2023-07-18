@@ -16,6 +16,7 @@ namespace EcsDotsTutorial.Systems
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<BrainTag>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -25,11 +26,14 @@ namespace EcsDotsTutorial.Systems
             float deltaTime = SystemAPI.Time.DeltaTime;
             var entityCommandBufferSingleton =
                 SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-
+            var brainTag = SystemAPI.GetSingletonEntity<BrainTag>();
+            var brainScale = SystemAPI.GetComponent<LocalTransform>(brainTag).Scale;
+            var brainRadius = brainScale * 5f + 0.5f;
+            
             new ZombieWalkJob()
             {
                 DeltaTime = deltaTime,
-                BrainRadiusSq = 5.5f * 5.5f,
+                BrainRadiusSq = brainRadius,
                 EntityCommandBufferParalleWriter = entityCommandBufferSingleton
                     .CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
             }.ScheduleParallel();
